@@ -1,0 +1,32 @@
+{
+  "manifest_version": 2,
+  "name": "OLSeven Search",
+  "version": "1.0",
+
+  // Recommended
+  "description": "Ekstensi pencarian untuk aplikasi mobile OLSeven",
+  "icons": {
+    "59" : "images/iconOri.png"
+  },
+  "browser_action": {
+          "default_icon": {                    // optional
+            "32": "images/icon32.png",           // optional
+            "24": "images/icon24.png" ,         // optional
+            "16": "images/icon16.png"          // optional  
+          },
+          "default_title": "OLSeven Login"     // optional; shown in tooltip
+  },
+  "background": {
+    "scripts": ["jquery-3.2.1.min.js","background.js"]
+  },
+  "content_scripts": [{
+     "js": ["jquery-3.2.1.min.js", "content.js","bootstrap/js/bootstrap.min.js"],
+     "matches": ["http://*/*", "https://*/*"]
+   }],
+  "permissions": [
+      "tabs",
+      "contextMenus",
+      "http://*/*",
+      "https://*/*"
+  ]
+}

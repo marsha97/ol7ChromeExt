@@ -1,0 +1,110 @@
+var status;
+var statusTemp;
+var method; //loginMethod
+var token = "";
+var userId ="";
+var windowID = 0;
+var selection ="";
+
+chrome.browserAction.onClicked.addListener(initAction);
+
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+    if ((message.username === "" || message.password === "" || message.phoneId === "" || message.phoneId === 0) 
+            && (status === "loggedOut" || status === "")) {
+        alert("Data harus diisi semua");
+    } else {
+        if (typeof (Storage) !== 'undefined') {
+        	//jika token dan userID berhasil didapatkan
+        	if (getTokenNuserId(message.username, message.password)){
+	            
+        	}
+        	else{
+        		showInvalidUserMsg();
+        	}
+        } else {
+            alert("Maaf, browser anda tidak dapat menyimpan data local. Mohon update browser Anda");
+        }
+    }
+});
+
+function getTokenNuserId(username, password){
+
+}
+
+function doLoggedInActions(){
+	storeData(message.username, message.password, message.phoneId, message.status);
+	chrome.windows.getCurrent(function (window) {
+	    windowID = window.id;
+	    closeWindow();
+	    createWindow();
+	    showHideMenu();
+	});
+}
+
+function showInvalidUserMsg(message){
+	alert(message);
+}
+
+function showHideMenu(){
+	if (status === "loggedOut"){
+		removeContextMenu();
+	}
+	else if (status === "loggedIn"){
+		createContextMenu();
+	}
+}
+
+function createContextMenu(){
+	chrome.contextMenus.create({"title":"Cari '%s' di aplikasi OLSeven", "contexts":["selection"], "onclick":getSelection});
+	//chrome.contextMenus.create({title:"Cari '%s' di aplikasi OLSeven", contexts:["selection"], onclick:getSelection},searchatBL);
+}
+
+function removeContextMenu(){
+	chrome.contextMenus.removeAll();
+}
+
+function getSelection(info){
+	selection = info.selectionText;
+	searchatBL();
+}
+
+function searchatBL(){
+	alert("Selected text: " + selection);
+}
+
+function checkStatus() {
+    if (localStorage.getItem("status") !== null) {
+        status = localStorage.getItem("status");
+    } else {
+        status = "loggedOut";
+    }
+}
+
+function createWindow() {
+    checkStatus();
+    if (status === "loggedOut") {
+        chrome.windows.create({url: "login.html", type: "popup", width: 800,
+            height: 600});
+    } else {
+        chrome.windows.create({url: "main.html", type: "popup", width: 800,
+            height: 600});
+    }
+}
+
+function storeData(username, password, phoneId, status) {
+    localStorage.setItem("username", username);
+    localStorage.setItem("password", password);
+    localStorage.setItem("phoneId", phoneId);
+    localStorage.setItem("status", status);
+}
+
+function closeWindow() {
+    chrome.windows.remove(windowID, function () {
+        windowID = 0;
+    });
+}
+
+function initAction(){
+    status = localStorage.getItem("status");
+    createWindow();
+}
